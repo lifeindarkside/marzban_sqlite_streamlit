@@ -10,9 +10,6 @@ RUN pip install streamlit
 # копирование кода приложения
 COPY . /app/
 
-# запуск отображения хеша пароля
-RUN python /app/passwordhash.py
-
 # установка рабочей директории
 WORKDIR /app
 
