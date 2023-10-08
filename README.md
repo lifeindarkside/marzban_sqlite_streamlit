@@ -1,6 +1,6 @@
 # Marzban Dashboard Project
 
-Этот дашборд создан для визуализации статистик в проекте [Marzban](https://github.com/Gozargah/Marzban), используя MySQL для хранения данных.
+Этот дашборд создан для визуализации статистик в проекте [Marzban](https://github.com/Gozargah/Marzban), используя SQLITE БД, встроенную в контейнер.
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/9fcc5f15-90ce-4292-894d-eaa01afd14da)
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/8fcd7d19-1a5f-408d-8f83-7d5afc5da219)
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/f55a79ec-2889-4897-8500-540a44c09b7b)
@@ -8,53 +8,126 @@
 
 ## Установка
 
-### Шаг 1: Подготовка конфигурационного файла
+### Шаг 1: Загрузка файлов
 
-Первым делом, вам нужно подготовить файл конфигурации. Скопируйте `config.yaml.example` в новый файл с именем `config.yaml` и заполните все необходимые поля соответствующими значениями вашей установки Marzban и базы данных MySQL.
+Загрузите файлы напрямую в папку `/opt/marzban/`
 
-Пример:
+```bash
+cd /opt/marzban/
+git clone https://github.com/lifeindarkside/marzban_sqlite_streamlit.git
+```
 
-```yaml
+### Шаг 2: Добавление контейнера
+
+Подключаем наш дашборд для запуска в докер контейнере. Для этого надо отредактировать файл `docker-compose.yml` в папке `/opt/marzban/` 
+
+```bash
+nano /opt/marzban/docker-compose.yml
+```
+
+Прописываем в него следующие строки
+```
+  analytics:
+    build: ./analytics
+    environment: 
+      - MY_SECRET_PASSWORD=ВАШПАРОЛЬ
+    ports:
+      - 8501:8501
+    depends_on:
+      - marzban
+    volumes:
+      - /opt/marzban/marzban_sqlite_streamlit:/app
+      - /var/lib/marzban:/var/lib/marzban
+```
+
+ВНИМАНИЕ! Замените `ВАШПАРОЛЬ` на любой ваш пароль. он необходим для формирования хеш пароля, чтобы ваш дашборд не светился на весь интернет открыто.
+
+Итоговый файл должен выглядеть примерно так
+```
+services:
+  marzban:
+    image: gozargah/marzban:dev
+    restart: always
+    env_file: .env
+    network_mode: host
+    volumes:
+      - /var/lib/marzban:/var/lib/marzban
+
+  analytics:
+    build: ./analytics
+    environment: 
+      - MY_SECRET_PASSWORD=abc123123123
+    ports:
+      - 8501:8501
+    depends_on:
+      - marzban
+    volumes:
+      - /opt/marzban/marzban_sqlite_streamlit:/app
+      - /var/lib/marzban:/var/lib/marzban
+```
+
+### Шаг 3: Запуск
+
+Для запуска вам необходимо выполнить обновление и потом сделать restart
+
+```bash
+marzban update
+```
+
+```bash
+marzban restart
+```
+
+Итогом панель запустится, но получить в нее доступ не получится. Так как мы не сменили хеш пароля.
+
+### Шаг 4: Смена пароля
+
+Для получения хеша пароля выполните команду 
+
+```bash
+docker exec -it marzban-analytics-1 python passwordhash.py
+```
+
+в консоли вы получите следующую инфу 
+![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/767371a6-9de9-49a5-abce-573183036a6f)
+
+Полученный в консоли хеш, надо скопировать и поместить в файле `config.yaml`
+
+```bash
+nano /opt/marzban/marzban_sqlite_streamlit/config.yaml
+```
+
+В файле необходимо заменить логин и хеш пароля
+
+Например:
+
+```
 credentials:
-  ssh_host: 'your_ssh_host_here'
-  ssh_port: your_ssh_port_here
-  ssh_user: 'your_ssh_username_here'
-  ssh_pass: 'your_ssh_password_here'
-  sql_hostname: 'your_sql_hostname_here'
-  sql_port: your_sql_port_here
-  sql_username: 'your_sql_username_here'
-  sql_password: 'your_sql_password_here'
-  sql_main_database: 'your_sql_main_database_here'
+  usernames:
+    root: #ваш логин
+      name: root #отображаемое имя
+      password: abc # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: 'sajkhfdjklhfjkhsdlfkasdfasdfghlsdhfjksdhfjklhgadfgsdfgggsadfkljhasfghddfshdfhfgh9ogsdfgsdfgwwrhfgjrufgheruhwewerwerwergf' # Must be string
+  name: random_cookie_name # Must be string
 ```
-### Шаг 2: Установка зависимостей
+В строке key и name может быть любое текстовое значение без пробелов (это будут созранены ваши cookie файлы)
+Сохраните файл после дредактирования
 
-Перед запуском проекта убедитесь, что у вас установлен Python версии 3.8 или выше. Затем установите все необходимые зависимости, используя следующую команду в корневой директории проекта:
+### Шаг 5:
+Зайти на дашборд можно по адресу 
+`http://ip:8501/`
+где `ip` может быть ip адресом вашего сервера или доменом
 
-```sh
-pip install -r requirements.txt
+Если необходимо сменить порт, отредактируйте `docker-compose.yml` файл. Смените в нем параметр `port`.
+
+Например:
 ```
-
-Либо установите и активируйте окружение Conda
-```sh
-conda env create --name marzban-streamlit --file=conda_env_streamlit.yml
-```
-### Шаг 3: Запуск проекта
-Если вы создали окружение Conda, то сначала активируйте его
-```sh
-conda activate marzban-streamlit
+    ports:
+      - 9901:8501
 ```
 
-После того как вы установили все необходимые зависимости, вы можете запустить проект с помощью следующей команды в корневой директории проекта:
-
-```sh
-streamlit run main.py
-```
-Автоматически откроется страница браузера с адресом http://localhost:8501/
-
-Если необходимо сменить порт:
-```sh
-streamlit run main.py --server.port 8503
-```
 
 
 
