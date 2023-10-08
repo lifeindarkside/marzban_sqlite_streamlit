@@ -62,7 +62,7 @@ docker exec -it marzban-analytics-1 python passwordhash.py
 Полученный в консоли хеш, надо скопировать и поместить в файле `config.yaml`
 
 ```bash
-nano /opt/marzban/marzban_sqlite_streamlit/config.yaml
+nano /opt/marzban/streamlit/config.yaml
 ```
 
 В файле необходимо заменить логин и хеш пароля
@@ -81,7 +81,15 @@ cookie:
   name: random_cookie_name # Must be string
 ```
 В строке key и name может быть любое текстовое значение без пробелов (это будут созранены ваши cookie файлы)
-Сохраните файл после дредактирования
+Сохраните файл после дредактирования и обновите данные в контейнере
+
+```bash
+marzban update
+```
+
+```bash
+marzban restart
+```
 
 ### Шаг 4:
 Зайти на дашборд можно по адресу 
