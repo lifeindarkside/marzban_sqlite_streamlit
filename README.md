@@ -8,7 +8,98 @@
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/f55a79ec-2889-4897-8500-540a44c09b7b)
 
 
-## Установка
+## Установка через docker
+
+### Шаг 1: Изменение `docker-compose.yml`
+
+Подключаем наш дашборд для запуска в докер контейнере. Для этого надо отредактировать файл `docker-compose.yml` в папке `/opt/marzban/` 
+
+```bash
+nano /opt/marzban/docker-compose.yml
+```
+Прописываем в него следующие строки
+```
+  analytics:
+    image: lifeindarkside/marzban-analytics:latest
+    environment: 
+      - MY_SECRET_PASSWORD=ВАШПАРОЛЬ
+    ports:
+      - 8501:8501
+    depends_on:
+      - marzban
+    volumes:
+      - /opt/marzban/streamlit:/app
+      - /var/lib/marzban:/var/lib/marzban
+```
+
+ВНИМАНИЕ! Замените `ВАШПАРОЛЬ` на любой ваш пароль. он необходим для формирования хеш пароля, чтобы ваш дашборд не светился на весь интернет открыто.
+
+### Шаг 2: Запуск
+
+Для запуска вам необходимо выполнить обновление и потом сделать restart
+
+```bash
+marzban update
+```
+
+```bash
+marzban restart
+```
+
+Итогом панель запустится, но получить в нее доступ не получится. Так как мы не сменили хеш пароля.
+
+### Шаг 3: Смена пароля
+
+Для получения хеша пароля выполните команду 
+
+```bash
+docker exec -it marzban-analytics-1 python passwordhash.py
+```
+
+в консоли вы получите следующую инфу 
+![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/767371a6-9de9-49a5-abce-573183036a6f)
+
+Полученный в консоли хеш, надо скопировать и поместить в файле `config.yaml`
+
+```bash
+nano /opt/marzban/marzban_sqlite_streamlit/config.yaml
+```
+
+В файле необходимо заменить логин и хеш пароля
+
+Например:
+
+```
+credentials:
+  usernames:
+    root: #ваш логин
+      name: root #отображаемое имя
+      password: abc # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: 'sajkhfdjklhfjkhsdlfkasdfasdfghlsdhfjksdhfjklhgadfgsdfgggsadfkljhasfghddfshdfhfgh9ogsdfgsdfgwwrhfgjrufgheruhwewerwerwergf' # Must be string
+  name: random_cookie_name # Must be string
+```
+В строке key и name может быть любое текстовое значение без пробелов (это будут созранены ваши cookie файлы)
+Сохраните файл после дредактирования
+
+### Шаг 4:
+Зайти на дашборд можно по адресу 
+`http://ip:8501/`
+где `ip` может быть ip адресом вашего сервера или доменом
+
+Если необходимо сменить порт, отредактируйте `docker-compose.yml` файл. Смените в нем параметр `port`.
+
+Например:
+```
+    ports:
+      - 9901:8501
+```
+
+
+
+
+## Сборка из исходников файла
 
 ### Шаг 1: Загрузка файлов
 
