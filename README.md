@@ -28,7 +28,7 @@ nano /opt/marzban/docker-compose.yml
 Прописываем в него следующие строки
 ```
   analytics:
-    build: ./analytics
+    build: ./marzban_sqlite_streamlit
     environment: 
       - MY_SECRET_PASSWORD=ВАШПАРОЛЬ
     ports:
@@ -54,7 +54,7 @@ services:
       - /var/lib/marzban:/var/lib/marzban
 
   analytics:
-    build: ./analytics
+    build: ./marzban_sqlite_streamlit
     environment: 
       - MY_SECRET_PASSWORD=abc123123123
     ports:
