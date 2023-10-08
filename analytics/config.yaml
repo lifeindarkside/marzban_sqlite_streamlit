@@ -1,0 +1,9 @@
+credentials:
+  usernames:
+    root:
+      name: root
+      password: abc # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: 'sajkhfdjklhfjkhsdlfkasdfasdfghlsdhfjksdhfjklhgadfgsdfgggsadfkljhasfghddfshdfhfgh9ogsdfgsdfgwwrhfgjrufgheruhwewerwerwergf' # Must be string
+  name: random_cookie_name

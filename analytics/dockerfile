@@ -1,1 +1,20 @@
+FROM python:3.11.5
 
+# установка зависимостей 
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+# установка Streamlit
+RUN pip install streamlit
+
+# копирование кода приложения
+COPY . /app/
+
+# запуск отображения хеша пароля
+RUN python /app/passwordhash.py
+
+# установка рабочей директории
+WORKDIR /app
+
+# команда для запуска приложения
+CMD ["streamlit", "run", "main_sqlite.py"]
