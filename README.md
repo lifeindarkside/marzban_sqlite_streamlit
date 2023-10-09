@@ -3,7 +3,10 @@
 Этот дашборд создан для визуализации статистик в проекте [Marzban](https://github.com/Gozargah/Marzban), используя SQLITE БД, встроенную в контейнер.
 Собраны метрики по нодам и пользователям. 
 
-![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/9fcc5f15-90ce-4292-894d-eaa01afd14da)
+![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/2fd39235-9139-46a2-a734-2e200edf7861)
+![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/daaca12f-0e37-4542-a303-e44bb31c6b04)
+![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/6b54c4ce-f303-4bcb-8070-93ab9e8de191)
+
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/8fcd7d19-1a5f-408d-8f83-7d5afc5da219)
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/f55a79ec-2889-4897-8500-540a44c09b7b)
 
