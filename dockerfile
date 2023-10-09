@@ -4,9 +4,6 @@ FROM python:3.11.5
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-# установка Streamlit
-RUN pip install streamlit
-
 # копирование кода приложения
 COPY . /app/
 
