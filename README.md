@@ -59,7 +59,7 @@ docker exec -it marzban-analytics-1 python passwordhash.py
 в консоли вы получите следующую инфу 
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/767371a6-9de9-49a5-abce-573183036a6f)
 
-Полученный в консоли хеш, надо скопировать и поместить в файле `config.yaml`
+Полученный в консоли хеш, надо скопировать (без кавычек) и поместить в файле `config.yaml`
 
 ```bash
 nano /opt/marzban/streamlit/config.yaml
