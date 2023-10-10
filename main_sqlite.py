@@ -29,9 +29,11 @@ def getdata(query):
 def data_from_marzban(query):
     df = getdata(query)
     if "used_traffic" in df.columns:
+        df["used_traffic"] = df["used_traffic"].astype(float).fillna(0)
         df["used_traffic_gb"] = df["used_traffic"] / 1073741824
         df["used_traffic_gb"] = df["used_traffic_gb"].round(2)
     if "created_at" in df.columns:
+        df['created_at'] = pd.to_datetime(df['created_at']).fillna(pd.NaT)
         df["created_at"] = pd.to_datetime(df["created_at"])
         df["hour"] = df["created_at"].dt.hour
     return df 
@@ -43,7 +45,7 @@ def last_hour_users(df):
     return last_hour_users
 
 def users_by_hours(df):
-    hourly_counts = df.groupby(["hour", "node"])["username"].nunique()
+    hourly_counts = df.groupby(["hour", "node"])["username"].nunique().fillna(0).reset_index()
     hourly_counts = hourly_counts.reset_index()
     hourly_counts = hourly_counts.rename(columns={"username": "Connections"})
     return hourly_counts
