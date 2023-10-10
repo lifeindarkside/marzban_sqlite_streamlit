@@ -1,7 +1,7 @@
 # Marzban Dashboard Project
 
 Этот дашборд создан для визуализации статистик в проекте [Marzban](https://github.com/Gozargah/Marzban), используя SQLITE БД, встроенную в контейнер.
-Собраны метрики по нодам и пользователям. 
+Собраны метрики по нодам и пользователям. Работает только на ветке marzban:dev
 
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/2fd39235-9139-46a2-a734-2e200edf7861)
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/daaca12f-0e37-4542-a303-e44bb31c6b04)
@@ -20,7 +20,7 @@
 ```bash
 nano /opt/marzban/docker-compose.yml
 ```
-Прописываем в него следующие строки
+Добавляем в него следующие строки
 ```
   analytics:
     image: lifeindarkside/marzban-analytics:latest
@@ -31,27 +31,21 @@ nano /opt/marzban/docker-compose.yml
     depends_on:
       - marzban
     volumes:
-      - /opt/marzban/streamlit:/app
+      - /opt/marzban/streamlit/config.yaml:/app/config.yaml
       - /var/lib/marzban:/var/lib/marzban
 ```
 
 ВНИМАНИЕ! Замените `ВАШПАРОЛЬ` на любой ваш пароль. он необходим для формирования хеш пароля, чтобы ваш дашборд не светился на весь интернет открыто.
 
-### Шаг 2: Запуск
+### Шаг 2: Получение контейнера
 
-Для запуска вам необходимо выполнить обновление и потом сделать restart
+Инициализируйте получение обновление контейнеров.
 
 ```bash
 marzban update
 ```
 
-```bash
-marzban restart
-```
-
-Итогом панель запустится, но получить в нее доступ не получится. Так как мы не сменили хеш пароля.
-
-### Шаг 3: Смена пароля
+### Шаг 3: Применение пароля
 
 Для получения хеша пароля выполните команду 
 
@@ -75,20 +69,19 @@ nano /opt/marzban/streamlit/config.yaml
 ```
 credentials:
   usernames:
-    root: #ваш логин
-      name: root #отображаемое имя
-      password: abc # To be replaced with hashed password
+    root: # ваш логин
+      name: root # отображаемое имя
+      password: abc # замените нахеш пароля без кавычек
 cookie:
-  expiry_days: 30
-  key: 'sajkhfdjklhfjkhsdlfkasdfasdfghlsdhfjksdhfjklhgadfgsdfgggsadfkljhasfghddfshdfhfgh9ogsdfgsdfgwwrhfgjrufgheruhwewerwerwergf' # Must be string
-  name: random_cookie_name # Must be string
+  expiry_days: 30 # сколько дней действует куки файл
+  key: 'random_key_value' # должен быть строковым значением
+  name: random_cookie_name # должен быть строковым значением
 ```
 В строке key и name может быть любое текстовое значение без пробелов (это будут созранены ваши cookie файлы)
-Сохраните файл после дредактирования и обновите данные в контейнере
 
-```bash
-marzban update
-```
+`root:` вы можете заменить на любой ваш логин в дашборд. Например: `new_login:`
+
+Сохраните файл после редактирования и обновите данные в контейнере
 
 ```bash
 marzban restart
