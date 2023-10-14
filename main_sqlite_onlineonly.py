@@ -13,8 +13,7 @@ db_path = "/var/lib/marzban/db.sqlite3"
 st.set_page_config(
     page_title="MarzbanStat",
     page_icon="🧊",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
 
