@@ -1,7 +1,17 @@
 # Marzban Dashboard Project
+<p align="center">
+ <a href="./README.md">
+ English
+ </a>
+ /
+ <a href="./README-RU.md">
+ Русский
+ </a>
+</p>
 
-Этот дашборд создан для визуализации статистик в проекте [Marzban](https://github.com/Gozargah/Marzban), используя SQLITE БД, встроенную в контейнер.
-Собраны метрики по нодам и пользователям. Работает только на ветке marzban:dev
+This dashboard is created to visualize statistics in the [Marzban](https://github.com/Gozargah/Marzban) project using the SQLite database built into the container.
+Metrics are collected for nodes and users. Works only on the marzban:dev branch
+
 
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/2fd39235-9139-46a2-a734-2e200edf7861)
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/daaca12f-0e37-4542-a303-e44bb31c6b04)
@@ -11,90 +21,92 @@
 ![image](https://github.com/lifeindarkside/marzban_mysql_streamlit/assets/66727826/f55a79ec-2889-4897-8500-540a44c09b7b)
 
 
-## Установка через docker
+## Installation via docker
 
-### Шаг 1: Изменение `docker-compose.yml`
+### Step 1: Edit `docker-compose.yml`
 
-Подключаем наш дашборд для запуска в докер контейнере. Для этого надо отредактировать файл `docker-compose.yml` в папке `/opt/marzban/` 
+Connect our dashboard to run in a docker container. To do this, you need to edit the `docker-compose.yml` file in the `/opt/marzban/` folder 
 
 ```bash
 nano /opt/marzban/docker-compose.yml
 ```
-Добавляем в него следующие строки
+Add the following lines:
 ```
   analytics:
     image: lifeindarkside/marzban-analytics:latest
     environment: 
-      - MY_SECRET_PASSWORD=ВАШПАРОЛЬ
+      - MY_SECRET_PASSWORD=YOURPASSWORD  
     ports:
       - 8501:8501
     depends_on:
       - marzban
     volumes:
       - /opt/marzban/streamlit/config.yaml:/app/config.yaml
+      - /opt/marzban/streamlit/main_sqlite_en.py:/app/main_sqlite.py
       - /var/lib/marzban:/var/lib/marzban
 ```
 
-ВНИМАНИЕ! Замените `ВАШПАРОЛЬ` на любой ваш пароль. он необходим для формирования хеш пароля, чтобы ваш дашборд не светился на весь интернет открыто.
+ATTENTION! Replace `YOURPASSWORD` with any password of your choice. This is necessary to generate a password hash so that your dashboard does not shine on the entire Internet openly.
 
-### Шаг 2: Получение контейнера
+### Step 2: Get the container
 
-Инициализируйте получение обновление контейнеров.
+Initialize getting container updates.
 
 ```bash
 marzban update
 ```
 
-### Шаг 3: Применение пароля
+### Step 3: Apply password
 
-Для получения хеша пароля выполните команду 
+To get the password hash, run the command
 
 ```bash
 docker exec -it marzban-analytics-1 python passwordhash.py
 ```
 
-в консоли вы получите следующую инфу 
+In the console you will receive the following information:
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/767371a6-9de9-49a5-abce-573183036a6f)
 
-Полученный в консоли хеш, надо скопировать (без кавычек) и поместить в файле `config.yaml`
+Copy the hash obtained in the console (without quotes) and place it in the `config.yaml` file
 
 ```bash
 nano /opt/marzban/streamlit/config.yaml
 ```
 
-В файле необходимо заменить логин и хеш пароля
+In the file you need to replace the login and password hash
 
-Например:
+For example:
 
 ```
 credentials:
   usernames:
-    root: # ваш логин
-      name: root # отображаемое имя
-      password: abc # замените нахеш пароля без кавычек
+    root: # your login  
+      name: root # display name
+      password: abc # replace with password hash without quotes
 cookie:
-  expiry_days: 30 # сколько дней действует куки файл
-  key: 'random_key_value' # должен быть строковым значением
-  name: random_cookie_name # должен быть строковым значением
+  expiry_days: 30 # how many days the cookie is valid
+  key: 'random_key_value' # must be string value  
+  name: random_cookie_name # must be string value
 ```
-В строке key и name может быть любое текстовое значение без пробелов (это будут созранены ваши cookie файлы)
+In the key and name strings you can put any text value without spaces (this will save your cookie files)
 
-`root:` вы можете заменить на любой ваш логин в дашборд. Например: `new_login:`
+`root:` you can replace with any login you want for the dashboard. For example: `new_login:`
 
-Сохраните файл после редактирования и обновите данные в контейнере
+Save the file after editing and copy file `main_sqlite_en.py` into `/opt/marzban/streamlit/` folder. 
 
+Update the data in the container:
 ```bash
 marzban restart
 ```
 
-### Шаг 4:
-Зайти на дашборд можно по адресу 
+### Step 4:
+You can access the dashboard at:
 `http://ip:8501/`
-где `ip` может быть ip адресом вашего сервера или доменом
+where `ip` can be the IP address of your server or domain
 
-Если необходимо сменить порт, отредактируйте `docker-compose.yml` файл. Смените в нем параметр `port`.
+If you need to change the port, edit the `docker-compose.yml` file. Change the `port` parameter in it.
 
-Например:
+For example:
 ```
     ports:
       - 9901:8501
@@ -103,43 +115,44 @@ marzban restart
 
 
 
-## Сборка из исходников файла
+## Building from source files
 
-### Шаг 1: Загрузка файлов
+### Step 1: Download files
 
-Загрузите файлы напрямую в папку `/opt/marzban/`
+Download the files directly to the `/opt/marzban/` folder
 
 ```bash
 cd /opt/marzban/
 git clone https://github.com/lifeindarkside/marzban_sqlite_streamlit.git
 ```
 
-### Шаг 2: Добавление контейнера
+### Step 2: Add container
 
-Подключаем наш дашборд для запуска в докер контейнере. Для этого надо отредактировать файл `docker-compose.yml` в папке `/opt/marzban/` 
+Connect our dashboard to run in a docker container. To do this, you need to edit the `docker-compose.yml` file in the `/opt/marzban/` folder
 
 ```bash
 nano /opt/marzban/docker-compose.yml
 ```
 
-Прописываем в него следующие строки
+Add the following lines:
 ```
   analytics:
-    build: ./marzban_sqlite_streamlit
+    image: lifeindarkside/marzban-analytics:latest
     environment: 
-      - MY_SECRET_PASSWORD=ВАШПАРОЛЬ
+      - MY_SECRET_PASSWORD=YOURPASSWORD  
     ports:
       - 8501:8501
     depends_on:
       - marzban
     volumes:
-      - /opt/marzban/marzban_sqlite_streamlit:/app
+      - /opt/marzban/streamlit/config.yaml:/app/config.yaml
+      - /opt/marzban/streamlit/main_sqlite_en.py:/app/main_sqlite.py
       - /var/lib/marzban:/var/lib/marzban
 ```
 
-ВНИМАНИЕ! Замените `ВАШПАРОЛЬ` на любой ваш пароль. он необходим для формирования хеш пароля, чтобы ваш дашборд не светился на весь интернет открыто.
+ATTENTION! Replace `YOURPASSWORD` with any password of your choice. This is necessary to generate a password hash so that your dashboard does not shine on the entire Internet openly.
 
-Итоговый файл должен выглядеть примерно так
+The final file should look something like this:
 ```
 services:
   marzban:
@@ -160,12 +173,13 @@ services:
       - marzban
     volumes:
       - /opt/marzban/marzban_sqlite_streamlit:/app
+      - /opt/marzban/streamlit/main_sqlite_en.py:/app/main_sqlite.py
       - /var/lib/marzban:/var/lib/marzban
 ```
 
-### Шаг 3: Запуск
+### Step 3: Run
 
-Для запуска вам необходимо выполнить обновление и потом сделать restart
+To run you need to update and then restart:
 
 ```bash
 marzban update
@@ -175,56 +189,57 @@ marzban update
 marzban restart
 ```
 
-Итогом панель запустится, но получить в нее доступ не получится. Так как мы не сменили хеш пароля.
+As a result, the panel will start, but access to it will not be possible. Since we did not change the password hash.
 
-### Шаг 4: Смена пароля
+### Step 4: Change password
 
-Для получения хеша пароля выполните команду 
+To get the password hash, run the command:
 
 ```bash
 docker exec -it marzban-analytics-1 python passwordhash.py
 ```
 
-в консоли вы получите следующую инфу 
+In the console you will receive the following information:
 ![image](https://github.com/lifeindarkside/marzban_sqlite_streamlit/assets/66727826/767371a6-9de9-49a5-abce-573183036a6f)
 
-Полученный в консоли хеш, надо скопировать и поместить в файле `config.yaml`
+Copy the hash received in the console and place it in the `config.yaml` file:
 
 ```bash
 nano /opt/marzban/marzban_sqlite_streamlit/config.yaml
 ```
 
-В файле необходимо заменить логин и хеш пароля
+In the file you need to replace the login and password hash:
 
-Например:
+For example:
 
 ```
 credentials:
   usernames:
-    root: #ваш логин
-      name: root #отображаемое имя
+    root: #your login
+      name: root #display name 
       password: abc # To be replaced with hashed password
 cookie:
   expiry_days: 30
-  key: 'sajkhfdjklhfjkhsdlfkasdfasdfghlsdhfjksdhfjklhgadfgsdfgggsadfkljhasfghddfshdfhfgh9ogsdfgsdfgwwrhfgjrufgheruhwewerwerwergf' # Must be string
+  key: 'abc' # Must be string
   name: random_cookie_name # Must be string
 ```
-В строке key и name может быть любое текстовое значение без пробелов (это будут созранены ваши cookie файлы)
-Сохраните файл после дредактирования
+In the key and name strings you can put any text value without spaces (this will save your cookie files)
 
-### Шаг 5:
-Зайти на дашборд можно по адресу 
+Save the file after editing
+
+
+### Step 5:
+You can access the dashboard at:
 `http://ip:8501/`
-где `ip` может быть ip адресом вашего сервера или доменом
+where `ip` can be the IP address of your server or domain
 
-Если необходимо сменить порт, отредактируйте `docker-compose.yml` файл. Смените в нем параметр `port`.
+If you need to change the port, edit the `docker-compose.yml` file. Change the `port` parameter in it.
 
-Например:
+For example:
 ```
     ports:
       - 9901:8501
 ```
-
 
 
 
