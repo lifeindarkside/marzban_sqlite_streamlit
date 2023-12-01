@@ -65,7 +65,7 @@ echo "credentials:
 cookie:
   expiry_days: 30 # сколько дней действует куки файл
   key: 'random_key_value' # должен быть строковым значением или замените его на 120 символов латинского алфавита нижнего регистра
-  name: random_cookie_name" > /opt/marzban/streamlit/config.yaml # должен быть строковым значением
+  name: random_cookie_name # должен быть строковым значением" > /opt/marzban/streamlit/config.yaml
 ```
 
 
