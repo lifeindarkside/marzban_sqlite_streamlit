@@ -244,3 +244,8 @@ For example:
 
 
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=lifeindarkside/marzban_sqlite_streamlit&type=Date)](https://star-history.com/#lifeindarkside/marzban_sqlite_streamlit&Date)
+
+
